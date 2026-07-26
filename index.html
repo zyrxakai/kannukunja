@@ -1284,7 +1284,7 @@ function goToScreen(id){
     window.au=true;
     ['story-bgm','vaud','voice-bgm','bg-music'].forEach(i=>{
       const a=document.getElementById(i);
-      if(a){var p=a.play();if(p!==undefined)p.catch(()=>{\});a.pause();}
+      if(a){var p=a.play();if(p!==undefined)p.catch(()=>{});a.pause();}
     });
   }
   const prev=document.getElementById(cur),next=document.getElementById(id);
@@ -1488,7 +1488,7 @@ const storyBgm=document.getElementById('story-bgm');
 function playStoryBgm(){
   if(!storyBgmOn&&storyBgm){
     storyBgm.volume=0.6;
-    var p=storyBgm.play();if(p!==undefined){p.then(()=>storyBgmOn=true).catch(()=>{\});}else{storyBgmOn=true;}
+    var p=storyBgm.play();if(p!==undefined){p.then(()=>storyBgmOn=true).catch(()=>{});}else{storyBgmOn=true;}
   }
 }
 function pauseStoryBgm(){
