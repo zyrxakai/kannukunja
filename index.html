@@ -1603,7 +1603,21 @@ function checkVoice(){
 function toggleVoice(){
   const a=document.getElementById('vaud'),btn=document.getElementById('vpb'),bars=document.querySelectorAll('.wb');
   const voiceBgm=document.getElementById('voice-bgm');
-  if(!voiceOn){var p=a.play();var ok=()=>{voiceOn=true;btn.innerHTML='⏸';bars.forEach(b=>b.classList.add('on'));if(voiceBgm){voiceBgm.volume=0.1;var p2=voiceBgm.play();if(p2!==undefined)p2.catch(()=>{});}};if(p!==undefined){p.then(ok).catch(()=>document.getElementById('vnf').style.display='block');}else{ok();}}
+  if(!voiceOn){var p=a.play();var ok=()=>{voiceOn=true;btn.innerHTML='⏸';bars.forEach(b=>b.classList.add('on'));if(voiceBgm){
+if(!window.vCtx){
+const AC = window.AudioContext || window.webkitAudioContext;
+if(AC){
+window.vCtx = new AC();
+window.vGain = window.vCtx.createGain();
+window.vSrc = window.vCtx.createMediaElementSource(voiceBgm);
+window.vSrc.connect(window.vGain);
+window.vGain.connect(window.vCtx.destination);
+}
+}
+if(window.vGain) window.vGain.gain.value = 0.05;
+else voiceBgm.volume = 0.05;
+var p2=voiceBgm.play();if(p2!==undefined)p2.catch(()=>{});
+}};if(p!==undefined){p.then(ok).catch(()=>document.getElementById('vnf').style.display='block');}else{ok();}}
   else{a.pause();voiceOn=false;btn.innerHTML='▶';bars.forEach(b=>b.classList.remove('on'));if(voiceBgm)voiceBgm.pause();}
   a.addEventListener('ended',()=>{voiceOn=false;btn.innerHTML='▶';bars.forEach(b=>b.classList.remove('on'));if(voiceBgm)voiceBgm.pause();},{once:true});
 }
