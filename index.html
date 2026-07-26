@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Kerala e-Services Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & BASE ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#07070f;
+  --surf:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.07);
+  --gold:#d4a55a;
+  --gold-soft:rgba(212,165,90,0.12);
+  --rose:#e8799a;
+  --rose-soft:rgba(232,121,154,0.10);
+  --purple:#9b7fd4;
+  --purple-soft:rgba(155,127,212,0.10);
+  --text:#f0ece4;
+  --muted:rgba(240,236,228,0.45);
+  --dim:rgba(240,236,228,0.22);
+}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+  height:100%;height:100dvh;width:100vw;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+h1,h2,h3,h4,.display{font-family:'Playfair Display',serif}
+
+/* ── SCREENS ───────────────────────────────────────── */
+.screen{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease;
+  z-index:10;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:20px 15px 40px;
+  height:100%;height:100dvh;
+}
+.screen.active{opacity:1;pointer-events:all}
+
+/* ── ANIMATIONS ───────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.4)}65%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes floatUp{0%{bottom:-50px;opacity:.6}80%{opacity:.25}100%{bottom:110%;opacity:0;transform:rotate(360deg) scale(.5)}}
+@keyframes lr{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes glitch{
+  0%{filter:none;transform:translate(0)}
+  25%{filter:hue-rotate(90deg) invert(.08);transform:translate(-3px,1px)}
+  50%{filter:hue-rotate(180deg);transform:translate(3px,-1px)}
+  75%{filter:invert(.12);transform:translate(-2px,2px)}
+  100%{filter:none;transform:translate(0)}
+}
+@keyframes twinkle{0%,100%{opacity:.1;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes starGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,165,90,.4));transform:scale(1)}50%{filter:drop-shadow(0 0 24px rgba(212,165,90,1));transform:scale(1.1)}}
+@keyframes pulseFade{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes modalIn{from{transform:scale(.5) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes waveAnim{0%{height:4px}100%{height:var(--h,28px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,121,154,.4)}70%{box-shadow:0 0 0 10px rgba(232,121,154,0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
+@keyframes jbf{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-60px) scale(.5)}}
+@keyframes progressFill{from{width:0}to{width:100%}}
+@keyframes countPop{0%{opacity:0;transform:scale(0.4)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes blowAnim{0%{transform:scale(1)}40%{transform:scale(1.25) rotate(-6deg)}70%{transform:scale(0.9) rotate(4deg);filter:blur(1px)}100%{transform:scale(1)}}
+
+/* ── PRANK ─────────────────────────────────────────── */
+#prank{background:#f0f2f5;color:#222;font-family:Arial,sans-serif;z-index:100;justify-content:flex-start}
+#prank.glitching{animation:glitch .12s infinite}
+.gov-hdr{background:linear-gradient(135deg,#1a3a6e,#2556a0,#1a3a6e);color:#fff;width:100%;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.gov-emb{width:44px;height:44px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.gov-ttl h1{font-size:11px;font-weight:700;letter-spacing:.5px;font-family:Arial,sans-serif}
+.gov-ttl p{font-size:9px;opacity:.8;font-family:Arial,sans-serif}
+.gov-nav{background:#c62828;width:100%;padding:6px 14px;display:flex;gap:14px;overflow-x:auto}
+.gov-nav span{font-size:10px;color:#fff;white-space:nowrap}
+.gov-body{padding:12px;width:100%;overflow-y:auto;max-height:calc(100vh - 100px)}
+.gov-card{background:#fff;border:1px solid #ddd;border-radius:3px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.gov-card h3{font-size:13px;color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:7px;margin-bottom:12px;font-family:Arial,sans-serif}
+.gov-inp{width:100%;border:1px solid #bbb;padding:8px 10px;font-size:12px;border-radius:2px;margin-bottom:9px;color:#333;font-family:Arial,sans-serif}
+.gov-btn-el{background:#1a3a6e;color:#fff;border:none;padding:10px 20px;font-size:12px;border-radius:2px;cursor:pointer;display:block;margin:0 auto;width:75%;font-family:Arial,sans-serif}
+.gov-ld{display:none;text-align:center;margin-top:12px}
+.gov-ld.show{display:block}
+.ld-bar-w{background:#e0e0e0;border-radius:2px;height:7px;overflow:hidden;margin:8px auto;width:80%}
+.ld-bar-f{height:100%;background:linear-gradient(90deg,#1a3a6e,#4472c4);border-radius:2px;width:0%;transition:width .3s}
+.ld-txt{font-size:11px;color:#666;font-family:Arial,sans-serif}
+#go{position:fixed;inset:0;z-index:200;pointer-events:none;display:none}
+#go.on{display:block;background:rgba(255,0,80,.1);animation:glitch .08s infinite}
+
+/* ── BIRTHDAY ──────────────────────────────────────── */
+#birthday{background:radial-gradient(ellipse at 50% 60%,#12042a 0%,var(--bg) 70%);text-align:center;padding:0}
+#birthday canvas{position:absolute;inset:0;pointer-events:none}
+.birthday-scroll{width:100%;flex:1;min-height:0;overflow-y:auto;padding:20px;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch}
+.birthday-scroll::-webkit-scrollbar{display:none}
+.bd-wrap{position:relative;z-index:5;width:100%;max-width:400px;margin:auto;}
+.fhearts{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fh{position:absolute;bottom:-50px;animation:floatUp linear infinite;opacity:0}
+.psych{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,30px);font-weight:600;color:var(--text);opacity:0;animation:popIn .5s cubic-bezier(.68,-.55,.265,1.55) .2s forwards;font-style:italic}
+.psych-sub{font-size:12px;color:var(--muted);margin:4px 0 10px;opacity:0;animation:fadeUp .5s ease .8s forwards}
+.name-row{display:flex;justify-content:center;flex-wrap:wrap;margin-bottom:10px;gap:1px}
+.nl{font-family:'Playfair Display',serif;font-size:clamp(30px,9vw,58px);font-weight:700;color:transparent;background:linear-gradient(135deg,var(--gold),#fff,var(--gold));background-size:200%;-webkit-background-clip:text;background-clip:text;display:inline-block;opacity:0;transform:translateY(28px) scale(.5);animation:lr .38s ease forwards;animation-play-state:paused;letter-spacing:-1px}
+.bd-sub{font-family:'Playfair Display',serif;font-size:clamp(16px,4.5vw,24px);font-weight:400;font-style:italic;color:var(--rose);margin-bottom:4px;opacity:0;animation:fadeUp .6s ease 2s forwards}
+.bd-em{font-size:clamp(20px,5vw,26px);margin-bottom:8px;opacity:0;animation:popIn .5s cubic-bezier(.68,-.55,.265,1.55) 2.2s forwards}
+.stats-c{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin:0 auto;max-width:340px;backdrop-filter:blur(12px);opacity:0;animation:fadeUp .6s ease 2.6s forwards}
+.stats-c p{font-size:13px;color:var(--muted);margin-bottom:5px;line-height:1.5}
+.shi{color:var(--gold);font-weight:600;font-size:14px}
+.cake-sec{margin:6px 0;opacity:0;animation:fadeUp .6s ease 2.9s forwards;position:relative;z-index:20;}
+.cake-em{font-size:clamp(42px,10vw,56px);display:block;cursor:pointer;animation:hb 2.5s ease-in-out infinite;margin:6px 0}
+.cake-lbl{font-size:14px;color:var(--gold);font-weight:600;margin-top:4px;letter-spacing:1px;animation:pulseFade 1.5s infinite}
+.star-indicator{font-size:11px;color:var(--gold);margin-top:-6px;margin-bottom:14px;animation:pulseFade 2s infinite;font-family:'Inter',sans-serif;letter-spacing:0.5px}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg, #e6c587, #c8973e);
+  border:1px solid #f6dca7;border-radius:100px;padding:12px 28px;
+  font-size:14px;font-weight:600;color:#1a1005;cursor:pointer;
+  font-family:'Inter',sans-serif;
+  box-shadow:0 6px 24px rgba(212,165,90,.35);
+  margin-top:0px;
+  opacity:0;animation:fadeUp .6s ease 3.2s forwards;
+  transition:transform .2s, box-shadow .2s;
+}
+.nav-btn:active{transform:scale(.95);box-shadow:0 2px 10px rgba(212,165,90,.4);}
+.nav-btn svg{width:18px;height:18px;stroke:#1a1005;fill:none;stroke-width:2.5}
+.screen-top-nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 10px 20px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 50;
+}
+.nav-back, .nav-next {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 100px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.nav-back {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted); font-weight: 500; backdrop-filter: blur(8px);
+}
+.nav-back:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+.nav-next {
+  background: linear-gradient(135deg, #e6c587, #c8973e);
+  border: 1px solid #f6dca7; color: #1a1005;
+  box-shadow: 0 4px 16px rgba(212,165,90,.3);
+}
+.nav-next:active { transform: scale(0.95); }
+
+/* ── JOURNEY (Photo Story) ────────────────────────── */
+#journey {
+  background: var(--bg);
+  padding: 0;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.journey-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block; /* Standard block layout for robust scrolling */
+  padding-bottom: 160px; /* Space for the fixed bottom bar */
+}
+.journey-content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Don't stretch if not needed */
+  min-height: 100%;
+}
+.journey-top {
+  padding: 45px 15px 0;
+  text-align: center;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.journey-top h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.journey-top p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.j-progress-bar { display: none; }
+.j-progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--rose)); border-radius: 2px; width: 0%; transition: width .4s linear; }
+
+/* Slides Container */
+.j-slides-area {
+  width: 100%;
+  margin: 0;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.jslide {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+  animation: fadeUp 0.4s ease;
+  box-sizing: border-box;
+}
+.jslide.active { display: flex; z-index: 2; }
+
+/* 4:3 image container — responsive flex layout */
+.jslide-img-wrap {
+  width: 100%;
+  max-width: 420px;
+  flex: 0 1 auto; /* Allows it to shrink if the screen is short */
+  min-height: 0;
+  aspect-ratio: 4 / 3; /* Maintains 4:3 ratio perfectly */
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.jslide-img-wrap img, .jslide-img-wrap video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.jslide-caption {
+  text-align: center;
+  padding: 4px 0 0;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 600px;
+  z-index: 5;
+}
+.jslide-num {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+}
+.jslide-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(15px, 4.5vw, 20px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  font-style: italic;
+}
+.jslide-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+/* Bottom Bar — Fixed at the bottom of the screen */
+.j-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 15px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  background: rgba(7, 7, 15, 0.85); /* Semi-transparent bg matching var(--bg) */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 999;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.j-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.j-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.j-btn:active { transform: scale(.9); background: var(--gold-soft); }
+.j-dots { display: none; 
+}
+
+/* ── STORY ─────────────────────────────────────────── */
+#story{background:linear-gradient(180deg,var(--bg),#0e0820,var(--bg));padding:0;overflow:hidden;justify-content:flex-start}
+.story-scroll{width:100%;flex:1;min-height:0;overflow-y:auto;padding:10px 18px 80px;-webkit-overflow-scrolling:touch}
+.story-scroll::-webkit-scrollbar{display:none}
+.sec-hdr{text-align:center;margin-bottom:28px}
+.sec-hdr h2{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,34px);font-weight:600;color:var(--text);margin-bottom:5px}
+.sec-hdr p{font-size:13px;color:var(--muted)}
+.tl{position:relative;padding:6px 0}
+.tl::before{content:'';position:absolute;left:22px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--rose),var(--gold),var(--rose),transparent)}
+.tli{display:flex;gap:14px;margin-bottom:32px;opacity:0;transform:translateX(-16px);transition:all .55s ease;padding-left:8px}
+.tli.vis{opacity:1;transform:translateX(0)}
+.tl-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;z-index:2;margin-top:4px;margin-left:12px}
+.tl-dot.r{background:var(--rose);box-shadow:0 0 12px rgba(232,121,154,.5)}
+.tl-dot.g{background:var(--gold);box-shadow:0 0 12px rgba(212,165,90,.5)}
+.tl-dot.p{background:var(--purple);box-shadow:0 0 12px rgba(155,127,212,.5)}
+.tl-dot.b{background:#60a5fa;box-shadow:0 0 12px rgba(96,165,250,.5)}
+.tl-card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;flex:1}
+.tl-date{font-size:10px;color:var(--rose);font-weight:500;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;font-family:'Inter',sans-serif}
+.tl-card h4{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;font-style:italic}
+.tl-card p{font-size:13px;color:var(--muted);line-height:1.65}
+.ml{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:var(--rose);margin-top:6px}
+.moment-card{background:linear-gradient(135deg,var(--rose-soft),var(--purple-soft));border:1px solid rgba(232,121,154,.25);border-radius:16px;padding:16px 14px;position:relative;overflow:hidden}
+.mc-spark{position:absolute;right:14px;top:14px;font-size:18px;animation:hb 2s ease-in-out infinite}
+.moment-card h4{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--gold);margin-bottom:8px;font-style:italic}
+.moment-card p{font-size:13px;color:rgba(240,236,228,.85);line-height:1.7;margin-bottom:0}
+.mc-quote{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--rose);text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(232,121,154,.2)}
+.ps{width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;margin:10px 0;position:relative;background:linear-gradient(135deg,var(--rose-soft),var(--purple-soft));border:1px dashed rgba(232,121,154,.25)}
+.ps img{width:100%;height:100%;object-fit:cover}
+.psph{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--dim);font-size:11px;gap:5px;font-family:'Inter',sans-serif}
+.psph .phi{font-size:26px}
+.story-nav{display:flex;justify-content:center;margin-top:20px;padding-bottom:10px}
+
+/* ── LETTER ────────────────────────────────────────── */
+#letter{background:linear-gradient(135deg,#12042a,#080618,#180410);padding:0;overflow:hidden;justify-content:flex-start}
+.letter-scroll{width:100%;flex:1;min-height:0;overflow-y:auto;padding:10px 20px 80px;-webkit-overflow-scrolling:touch}
+.letter-scroll::-webkit-scrollbar{display:none}
+.env-wrap{width:100%;max-width:360px;margin:0 auto}
+.env-body{background:linear-gradient(135deg,#fefaf4,#f9f0e0);border-radius:12px;padding:28px 20px 36px;color:#2c1a10;box-shadow:0 12px 48px rgba(0,0,0,.6)}
+.ltr-from{font-family:'Playfair Display',serif;font-size:16px;color:#7a2020;margin-bottom:12px;text-align:center;font-style:italic}
+.ltr-greet{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:#4a1818;margin-bottom:12px}
+.ltr-body{font-size:14px;line-height:1.85;color:#3a2010;font-family:'Inter',sans-serif}
+.ltr-body p,.ltr-ml{margin-bottom:12px;min-height:1em}
+.ltr-ml{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:#7a2020;min-height:1em}
+.ltr-de{background:rgba(0,0,80,.05);border-left:2px solid #1a3a8a;padding:8px 12px;border-radius:0 4px 4px 0;font-style:italic;font-size:13px;color:#1a3a8a;margin:10px 0}
+.de-tr{font-size:10px;color:#666;margin-top:3px;font-style:normal}
+.ltr-sign{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:#7a2020;text-align:right;margin-top:16px;padding-top:12px;border-top:1px dashed #c8973e}
+.hs{text-align:center;font-size:28px;margin:10px 0;animation:hb 1.3s ease-in-out infinite}
+.cur{display:inline-block;width:2px;height:1.1em;background:#4a1818;vertical-align:text-bottom;animation:blink 1s infinite}
+.ltr-nav{display:flex;justify-content:center;padding:12px 0 0}
+
+/* ── AUSTRIA ───────────────────────────────────────── */
+#austria{background:linear-gradient(180deg,#020512,#040d2a,#020512);padding:0;text-align:center;overflow:hidden}
+.at-scroll{width:100%;flex:1;min-height:0;overflow-y:auto;padding:10px 20px 80px;-webkit-overflow-scrolling:touch;max-width:420px;margin:0 auto;position:relative;z-index:5}
+.at-scroll::-webkit-scrollbar{display:none}
+.sbg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sbg-s{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite}
+.at-hdr h2{font-family:'Playfair Display',serif;font-size:clamp(20px,5.5vw,30px);font-weight:600;color:var(--text);margin-bottom:4px}
+.at-hdr p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.fsvg{width:100%;max-width:340px;height:150px;margin:0 auto;display:block}
+.fp{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1.5;stroke-dasharray:5 4}
+.at-q{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:16px;margin:14px auto;max-width:360px;text-align:left}
+.at-q p{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:rgba(240,236,228,.9);line-height:1.75;margin-bottom:8px}
+.mlq{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--rose)}
+.cd-card{background:var(--surf);border:1px solid var(--border);border-radius:18px;padding:16px;max-width:340px;margin:0 auto 16px}
+.cd-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-family:'Inter',sans-serif}
+.cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cd-u{text-align:center}
+.cd-n{font-family:'Playfair Display',serif;font-size:clamp(22px,7vw,38px);font-weight:600;color:var(--gold);line-height:1}
+.cd-l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;font-family:'Inter',sans-serif}
+.promise{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--rose);margin-top:10px}
+
+/* ── MEMORIES ──────────────────────────────────────── */
+#memories{background:radial-gradient(ellipse at 30% 70%,#120420,var(--bg));padding:0;overflow:hidden;justify-content:flex-start}
+.mem-scroll{width:100%;flex:1;min-height:0;overflow-y:auto;padding:10px 16px 80px;-webkit-overflow-scrolling:touch}
+.mem-scroll::-webkit-scrollbar{display:none}
+.mem-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:380px;margin:0 auto 16px}
+.mc{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .2s}
+.mc:active{background:var(--rose-soft);border-color:rgba(232,121,154,.3)}
+.mc-em{font-size:26px;display:block;margin-bottom:6px}
+.mc-ti{font-size:12px;font-weight:500;color:var(--text);line-height:1.3;font-family:'Inter',sans-serif}
+.mc.fw{grid-column:1/-1}
+.jar-wrap{position:relative;display:flex;justify-content:center;margin-bottom:12px}
+.jar-svg{width:100px;height:130px;cursor:pointer;filter:drop-shadow(0 0 14px rgba(212,165,90,.25));transition:transform .3s}
+.jmb{position:absolute;font-size:18px;pointer-events:none;animation:jbf 1.1s ease-out forwards}
+#mem-modal{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+#mem-modal.open{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px)}
+.modal-card{position:relative;z-index:5;background:#0f0f1e;border:1px solid var(--border);border-radius:22px;padding:28px 24px 36px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.6);animation:modalIn .35s cubic-bezier(.32,1.6,.64,1)}
+.m-em{font-size:36px;text-align:center;display:block;margin-bottom:10px}
+.m-ti{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;font-style:italic;color:var(--gold);text-align:center;margin-bottom:12px}
+.m-tx{font-size:14px;color:rgba(240,236,228,.8);line-height:1.8;text-align:center;font-family:'Inter',sans-serif}
+.m-ml{font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:var(--rose);text-align:center;margin-top:12px}
+.m-close{display:block;margin:20px auto 0;background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 28px;border-radius:100px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* ── FINAL ─────────────────────────────────────────── */
+#final{background:#03030a;text-align:center;padding:20px;overflow:hidden}
+#star-canvas{position:absolute;inset:0}
+.final-c{position:relative;z-index:5;width:100%;max-width:400px}
+.star-icon{font-size:60px;display:block;margin-bottom:12px;animation:starGlow 2s ease-in-out infinite;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
+.scc{position:absolute;top:-4px;right:-4px;background:var(--rose);color:#fff;border-radius:50%;width:20px;height:20px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;opacity:0;transition:opacity .3s}
+.scc.v{opacity:1}
+.nm{font-family:'Playfair Display',serif;font-size:clamp(28px,9vw,54px);font-weight:700;color:transparent;background:linear-gradient(135deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;background-clip:text;display:block;opacity:0;animation:fadeUp .8s ease .3s forwards;letter-spacing:-1px}
+.nm-m{font-family:'Playfair Display',serif;font-size:clamp(17px,4.5vw,24px);font-style:italic;color:var(--rose);opacity:0;animation:fadeUp .8s ease .7s forwards;display:block}
+.nm-t{font-size:11px;color:var(--dim);margin-top:4px;opacity:0;animation:fadeUp .8s ease 1s forwards;font-family:'Inter',sans-serif}
+.final-msg{background:var(--surf);border:1px solid var(--border);border-radius:18px;padding:18px;max-width:360px;margin:16px auto;opacity:0;animation:fadeUp .8s ease 1.3s forwards}
+.final-msg p{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:rgba(240,236,228,.9);line-height:1.85;margin-bottom:9px}
+.final-ml{font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:var(--rose)}
+.final-de{font-size:13px;color:#93c5fd;font-style:italic;margin-top:6px;font-family:'Inter',sans-serif}
+.final-sign{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,32px);font-style:italic;color:var(--gold);opacity:0;animation:fadeUp .8s ease 1.6s forwards}
+.final-sign .kj{color:var(--rose)}
+.ee-hint{font-size:11px;color:var(--dim);margin-top:14px;opacity:0;animation:fadeUp .6s ease 2.5s forwards;font-family:'Inter',sans-serif}
+
+/* ── VOICE ─────────────────────────────────────────── */
+#voice-screen{background:linear-gradient(135deg,#0a001e,var(--bg),#00080e);padding:24px 20px;text-align:center;z-index:600;display:none}
+#voice-screen.open{display:flex}
+.vh h2{font-family:'Playfair Display',serif;font-size:clamp(20px,5.5vw,28px);font-weight:600;color:var(--gold);margin-bottom:6px;font-style:italic}
+.vh p{font-size:13px;color:var(--muted);margin-bottom:22px;font-family:'Inter',sans-serif}
+.vp{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:24px 20px;max-width:340px;margin:0 auto 18px}
+.va{font-size:44px;display:block;margin-bottom:10px;animation:hb 1.5s ease-in-out infinite}
+.vn{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--rose);margin-bottom:4px}
+.vs{font-size:12px;color:var(--dim);margin-bottom:18px;font-family:'Inter',sans-serif}
+.vwf{display:flex;align-items:center;justify-content:center;gap:3px;height:36px;margin-bottom:12px}
+.wb{width:3px;background:linear-gradient(180deg,var(--rose),var(--purple));border-radius:2px;height:4px;transform-origin:bottom}
+.wb.on{animation:waveAnim .5s ease-in-out infinite alternate}
+.vpb{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--purple));border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:pulse 2s infinite}
+.vpb:active{transform:scale(.9)}
+.vnf{font-size:13px;color:var(--dim);line-height:1.7;font-family:'Inter',sans-serif;padding:12px;background:var(--surf);border-radius:10px;border:1px solid var(--border)}
+.vnf code{font-size:12px;background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:monospace;color:var(--gold)}
+audio{display:none}
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:11px 26px;border-radius:100px;font-size:13px;cursor:pointer;display:block;margin:0 auto;font-family:'Inter',sans-serif}
+
+/* ── NAV DOTS ──────────────────────────────────────── */
+#ndots{position:fixed;right:10px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:7px;z-index:900}
+#ndots.v{display:flex}
+.nd{width:6px;height:6px;border-radius:50%;background:var(--dim);cursor:pointer;transition:all .3s}
+.nd.a{background:var(--rose);box-shadow:0 0 8px rgba(232,121,154,.5);transform:scale(1.5)}
+#mbt{position:fixed;top:14px;right:14px;z-index:950;width:38px;height:38px;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:50%;font-size:16px;cursor:pointer;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px);color:var(--text)}
+#mbt.v{display:flex}
+#mbt.pl{border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="go"></div>
+
+<!-- PRANK -->
+<div id="prank" class="screen active">
+<div class="gov-hdr">
+<div class="gov-emb">&#127994;</div>
+<div class="gov-ttl"><h1>GOVERNMENT OF KERALA</h1><p>e-Services Portal &mdash; KSRTC Route Finder</p></div>
+</div>
+<div class="gov-nav">
+<span>&#127968; Home</span><span>&#128652; Bus Routes</span><span>&#128204; Timetable</span><span>&#128179; e-Ticketing</span><span>&#128222; Help</span>
+</div>
+<div class="gov-body">
+<div class="gov-card">
+<h3>&#128269; KSRTC Bus Route Search</h3>
+<div style="font-size:10px;color:#777;margin-bottom:12px;font-family:Arial,sans-serif">Effective 01-Apr-2025 | Schedule v3.4.2</div>
+<label style="font-size:11px;color:#555;display:block;margin-bottom:3px;font-family:Arial,sans-serif">From Station *</label>
+<input class="gov-inp" type="text" value="Thiruvananthapuram Central" readonly/>
+<label style="font-size:11px;color:#555;display:block;margin-bottom:3px;font-family:Arial,sans-serif">To Station *</label>
+<input class="gov-inp" type="text" value="Ernakulam KSRTC Depot" readonly/>
+<label style="font-size:11px;color:#555;display:block;margin-bottom:3px;font-family:Arial,sans-serif">Date of Journey *</label>
+<input class="gov-inp" type="text" id="prank-date" readonly/>
+<button class="gov-btn-el" id="gov-btn" onclick="startPrank()">&#128269; Search Buses</button>
+</div>
+<div class="gov-card">
+<h3>&#128226; Important Notice</h3>
+<p style="font-size:11px;color:#555;line-height:1.6;font-family:Arial,sans-serif">Due to maintenance, certain routes may be suspended. Verify timings before boarding. Helpline: 1800-XXX-XXXX (Toll Free)</p>
+</div>
+<div class="gov-ld" id="gov-ld">
+<p class="ld-txt" id="ld-txt">Fetching bus routes...</p>
+<div class="ld-bar-w"><div class="ld-bar-f" id="ld-bar"></div></div>
+<p class="ld-txt" style="font-size:10px;color:#999" id="ld-sub">Connecting to KSRTC server...</p>
+</div>
+</div>
+</div>
+
+<!-- BIRTHDAY -->
+<div id="birthday" class="screen">
+<canvas id="conf-cv"></canvas>
+<div class="fhearts" id="fhearts"></div>
+<div class="birthday-scroll">
+<div class="bd-wrap">
+<div class="psych">&#128514; Haha, got you!!</div>
+<div class="psych-sub">Did you seriously think I sent you a bus timetable? &#128652;</div>
+<div class="name-row" id="nrow"></div>
+<div class="bd-sub">Happy Birthday, my Kannumon &#127775;</div>
+<div class="bd-em">&#127874; &#127881; &#128150; &#127882; &#127800;</div>
+<div class="cake-sec">
+<div class="cake-lbl" style="margin-bottom:8px">👇 TAP THE CAKE 👇</div>
+<span class="cake-em" id="cake" onclick="blowCandle()">&#127874;</span>
+<div class="cake-lbl" id="cake-lbl">Click 3 times to blow the cake!</div>
+</div>
+<div class="stats-c">
+<p>You are now <span class="shi">21 years</span> old.</p>
+<p>That&apos;s <span class="shi" id="days-count">7,670</span> days since the universe gave me my everything.</p>
+<p style="margin-top:6px;"><span class="shi">You are my all, Kannumon. Every single second with you is a blessing I will cherish forever. &#128155;</span></p>
+</div>
+<button class="nav-btn" onclick="goToScreen('journey')">
+Our 1.3 Years &nbsp; &#127800;
+<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+</button>
+</div>
+</div>
+</div>
+
+<!-- JOURNEY (Photo Story) -->
+<div id="journey" class="screen">
+<div class="journey-scroll">
+<div class="journey-content">
+<audio id="story-bgm" src="dude-bgm.mp3" loop preload="auto"></audio>
+<div id="j-curiosity" style="position:fixed;inset:0;background:#000;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity 0.8s ease;">
+<div id="jc-count" style="font-family:'Playfair Display',serif;font-size:110px;font-weight:700;color:#fff;opacity:0;line-height:1;"></div>
+<div id="jc-text" style="font-family:'Playfair Display',serif;font-size:28px;font-style:italic;opacity:0;display:none;transition:opacity 0.6s ease;text-align:center;color:var(--gold);line-height:1.6;padding:0 32px;">Close your eyes...</div>
+</div>
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('birthday')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('story');pauseStoryBgm()">Story &#8594;</button>
+</div>
+<div class="journey-top">
+<h2>Our 1.3 Years</h2>
+<p>Every moment, every smile, every ordinary day we made extraordinary</p>
+</div>
+<div class="j-progress-bar"><div class="j-progress-fill" id="jpf"></div></div>
+<div class="j-slides-area" id="jslides">
+<div class="jslide" id="js1">
+<div class="jslide-img-wrap">
+<img src="FJLQ3661.JPG" alt="Memory 1" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">01 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js2">
+<div class="jslide-img-wrap">
+<img src="IMG_1487.jpg" alt="Memory 2" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">02 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js3">
+<div class="jslide-img-wrap">
+<img src="IMG_1492.jpg" alt="Memory 3" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">03 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js4">
+<div class="jslide-img-wrap">
+<img src="IMG_2013.jpg" alt="Memory 4" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">04 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js5">
+<div class="jslide-img-wrap">
+<img src="IMG_2054.jpg" alt="Memory 5" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">05 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js6">
+<div class="jslide-img-wrap">
+<img src="IMG_2079.jpg" alt="Memory 6" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">06 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js7">
+<div class="jslide-img-wrap">
+<img src="IMG_2123.jpg" alt="Memory 7" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">07 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js8">
+<div class="jslide-img-wrap">
+<img src="IMG_2253.jpg" alt="Memory 8" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">08 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js9">
+<div class="jslide-img-wrap">
+<img src="IMG_2282.JPG" alt="Memory 9" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">09 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js10">
+<div class="jslide-img-wrap">
+<img src="IMG_2404.jpg" alt="Memory 10" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">10 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js11">
+<div class="jslide-img-wrap">
+<img src="IMG_2434.jpg" alt="Memory 11" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">11 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js12">
+<div class="jslide-img-wrap">
+<img src="IMG_2763.jpg" alt="Memory 12" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">12 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js13">
+<div class="jslide-img-wrap">
+<img src="IMG_2811.jpg" alt="Memory 13" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">13 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js14">
+<div class="jslide-img-wrap">
+<img src="IMG_2823.jpg" alt="Memory 14" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">14 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js15">
+<div class="jslide-img-wrap">
+<img src="IMG_2859.jpg" alt="Memory 15" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">15 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js16">
+<div class="jslide-img-wrap">
+<img src="IMG_2936.jpg" alt="Memory 16" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">16 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js17">
+<div class="jslide-img-wrap">
+<img src="IMG_3116.jpg" alt="Memory 17" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">17 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js18">
+<div class="jslide-img-wrap">
+<img src="IMG_3184.jpg" alt="Memory 18" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">18 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js19">
+<div class="jslide-img-wrap">
+<img src="IMG_3191.jpg" alt="Memory 19" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">19 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js20">
+<div class="jslide-img-wrap">
+<img src="IMG_3203.jpg" alt="Memory 20" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">20 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js21">
+<div class="jslide-img-wrap">
+<img src="IMG_3208.jpg" alt="Memory 21" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">21 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js22">
+<div class="jslide-img-wrap">
+<img src="IMG_3414.jpg" alt="Memory 22" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">22 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js23">
+<div class="jslide-img-wrap">
+<img src="IMG_3415.jpg" alt="Memory 23" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">23 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js24">
+<div class="jslide-img-wrap">
+<img src="IMG_3533.jpg" alt="Memory 24" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">24 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js25">
+<div class="jslide-img-wrap">
+<img src="IMG_3547.jpg" alt="Memory 25" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">25 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js26">
+<div class="jslide-img-wrap">
+<img src="IMG_3620.jpg" alt="Memory 26" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">26 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js27">
+<div class="jslide-img-wrap">
+<img src="IMG_3896.jpg" alt="Memory 27" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">27 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js28">
+<div class="jslide-img-wrap">
+<img src="IMG_4333.jpg" alt="Memory 28" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">28 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js29">
+<div class="jslide-img-wrap">
+<img src="IMG_4336.jpg" alt="Memory 29" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">29 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js30">
+<div class="jslide-img-wrap">
+<img src="IMG_4358.jpg" alt="Memory 30" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">30 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js31">
+<div class="jslide-img-wrap">
+<img src="IMG_4457.jpg" alt="Memory 31" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">31 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js32">
+<div class="jslide-img-wrap">
+<img src="IMG_4550.jpg" alt="Memory 32" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">32 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js33">
+<div class="jslide-img-wrap">
+<img src="IMG_4862.jpg" alt="Memory 33" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">33 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js34">
+<div class="jslide-img-wrap">
+<img src="IMG_5009.jpg" alt="Memory 34" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">34 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js35">
+<div class="jslide-img-wrap">
+<img src="IMG_5022.jpg" alt="Memory 35" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">35 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js36">
+<div class="jslide-img-wrap">
+<img src="IMG_5042.JPG" alt="Memory 36" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">36 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js37">
+<div class="jslide-img-wrap">
+<img src="IMG_5073.JPG" alt="Memory 37" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">37 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js38">
+<div class="jslide-img-wrap">
+<img src="IMG_5510.jpg" alt="Memory 38" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">38 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js39">
+<div class="jslide-img-wrap">
+<img src="IMG_6954.jpg" alt="Memory 39" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">39 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js40">
+<div class="jslide-img-wrap">
+<img src="IMG_E1199.jpg" alt="Memory 40" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">40 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js41">
+<div class="jslide-img-wrap">
+<img src="IMG_E1262.jpg" alt="Memory 41" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">41 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js42">
+<div class="jslide-img-wrap">
+<img src="IMG_E1463.jpg" alt="Memory 42" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">42 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+<div class="jslide" id="js43">
+<div class="jslide-img-wrap">
+<img src="IMG_E2056.jpg" alt="Memory 43" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">43 / 50</div>
+<div class="jslide-title">Our favourite nothing days</div>
+<div class="jslide-text">We didn't need plans. Just each other.</div>
+</div>
+</div>
+<div class="jslide" id="js44">
+<div class="jslide-img-wrap">
+<img src="IMG_E2186.JPG" alt="Memory 44" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">44 / 50</div>
+<div class="jslide-title">When you laugh like that</div>
+<div class="jslide-text">There is no sound better than your laugh.</div>
+</div>
+</div>
+<div class="jslide" id="js45">
+<div class="jslide-img-wrap">
+<img src="IMG_E3586.jpg" alt="Memory 45" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">45 / 50</div>
+<div class="jslide-title">My favourite photo of us</div>
+<div class="jslide-text">This one. This is my favourite. This is home.</div>
+</div>
+</div>
+<div class="jslide" id="js46">
+<div class="jslide-img-wrap">
+<img src="IMG_E4167.jpg" alt="Memory 46" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">46 / 50</div>
+<div class="jslide-title">474 days. Not one missed.</div>
+<div class="jslide-text">Most people never find this. We found it in the most ordinary of places.</div>
+</div>
+</div>
+<div class="jslide" id="js47">
+<div class="jslide-img-wrap">
+<img src="IMG_E4181.jpg" alt="Memory 47" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">47 / 50</div>
+<div class="jslide-title">The Sparkle Eyes</div>
+<div class="jslide-text">I saw my future in those eyes. 💕</div>
+</div>
+</div>
+<div class="jslide" id="js48">
+<div class="jslide-img-wrap">
+<img src="IMG_E4330.jpg" alt="Memory 48" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">48 / 50</div>
+<div class="jslide-title">Our stupid jokes</div>
+<div class="jslide-text">No one else would understand them.</div>
+</div>
+</div>
+<div class="jslide" id="js49">
+<div class="jslide-img-wrap">
+<img src="IMG_E4809.jpg" alt="Memory 49" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">49 / 50</div>
+<div class="jslide-title">Every small moment matters</div>
+<div class="jslide-text">The walks, the calls, the silences that were never awkward.</div>
+</div>
+</div>
+<div class="jslide" id="js50">
+<div class="jslide-img-wrap">
+<img src="ZJYD4897.JPG" alt="Memory 50" />
+</div>
+<div class="jslide-caption">
+<div class="jslide-num">50 / 50</div>
+<div class="jslide-title">That smile I kept thinking about</div>
+<div class="jslide-text">Some days I'd just wait to see it. That was enough.</div>
+</div>
+</div>
+</div>
+<div class="j-bottom-bar" id="j-bottom-bar">
+  <div class="j-controls">
+    <button class="j-btn" onclick="prevSlide()" aria-label="Previous">&#8592;</button>
+    <div class="j-dots" id="jdots"></div>
+    <button class="j-btn" onclick="nextSlide()" aria-label="Next">&#8594;</button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- STORY TIMELINE -->
+<div id="story" class="screen">
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('journey')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('letter')">The Letter &#8594;</button>
+</div>
+<div class="story-scroll" id="story-scroll">
+<div class="sec-hdr"><h2>Our Story</h2><p>1 year, 3 months. Not a single day apart.</p></div>
+<div class="tl">
+<div class="tli" data-tl><div class="tl-dot r"></div><div class="tl-card">
+<div class="tl-date">The Beginning</div><h4>She walked in. Everything changed.</h4>
+<p>Before you &mdash; I was just Akshai at work. After you &mdash; I was Akshai who had a reason to smile every single morning.</p>
+</div></div>
+<div class="tli" data-tl><div class="tl-dot g"></div><div class="tl-card">
+<div class="tl-date">Getting Closer</div><h4>When &ldquo;colleague&rdquo; wasn&apos;t enough.</h4>
+<p>From saying hi in corridors to staying on call till 2am &mdash; we never ran out of things to say.</p>
+<div class="ml">&#3374;&#3368; &#3349;&#3370;&#3335;&#3375; &#3359;&#3378;&#3349;&#3340;&#3370;&#3325;&#3378;&#3339;&#3376; &#3323;&#3379;&#3330;&#3366; &#3342;&#3391;&#3343;&#3378;&#3349;&#3358;&#3376;&#3349;&#3404; &#128149;</div>
+</div></div>
+<div class="tli" data-tl><div class="tl-dot p"></div><div class="tl-card">
+<div class="moment-card">
+<div class="mc-spark">&#10024;</div>
+<h4>The Moment I&apos;ll Never Forget</h4>
+<p>The day you left the job &mdash; you walked to the door, turned around and asked, <em>&ldquo;Did I return? Will I come back here?&rdquo;</em></p>
+<p style="margin-top:10px">I looked into your eyes and saw <strong>sparkles</strong>. Stars. Our entire future in two seconds.</p>
+<p style="margin-top:10px">I said <em>&ldquo;No, you don&apos;t need to come back.&rdquo;</em><br/>My heart was screaming &mdash;<br/><strong>&ldquo;Please. Please come back to me.&rdquo;</strong></p>
+<p style="margin-top:10px">I said it dramatically &mdash; <em>&ldquo;Come back.&rdquo;</em><br/>You left with your family. I went home and cried.</p>
+<div class="mc-quote">&ldquo;That was the moment I knew.<br/>NACHUMMA was already home.&rdquo;</div>
+</div>
+</div></div>
+<div class="tli" data-tl><div class="tl-dot r"></div><div class="tl-card">
+<div class="tl-date">Every Single Day</div><h4>474 days. Zero days off.</h4>
+<p>We cannot go a single day without seeing each other. Not one. That&apos;s not normal &mdash; that&apos;s extraordinary. That&apos;s us.</p>
+<div class="ps"><img src="FJLQ3661.JPG" alt="Us" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="psph"><span class="phi">&#128247;</span><span>Add FJLQ3661.JPG</span></div></div>
+</div></div>
+<div class="tli" data-tl><div class="tl-dot b"></div><div class="tl-card">
+<div class="tl-date">1.3 Years Strong</div><h4>We built something rare.</h4>
+<p>Some people search their whole lives for what we have. I found it in a girl who asked if she&apos;d come back &mdash; and stole my heart entirely in the process.</p>
+<div class="ps"><img src="IMG_1487.jpg" alt="Us" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="psph"><span class="phi">&#128247;</span><span>Add IMG_1487.jpg</span></div></div>
+<div class="ml" style="margin-top:8px">&#3334;&#3390;&#3368;&#3376; &#3374;&#3391;&#3350;&#3381;&#3340;&#3381; &#3374;&#3344;&#3384;&#3360;&#3390; &#3363;&#3381;&#3344;&#3361;&#3391;&#3349;&#3381;&#3344;&#3369;&#3345;&#3381;&#3345;&#3369; &#128149;</div>
+</div></div>
+</div>
+</div>
+</div>
+
+<!-- LETTER -->
+<div id="letter" class="screen">
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('story')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('austria')">Austria &#8594;</button>
+</div>
+<div class="letter-scroll">
+<div class="env-wrap">
+<div class="env-body">
+<div class="ltr-from">A letter for you, Kannumon...</div>
+<div class="ltr-greet">My dearest Babadiii,</div>
+<div class="ltr-body">
+<div class="hs">&#128140;</div>
+<p id="lp1"></p><p id="lp2"></p><p id="lp3"></p>
+<div class="ltr-de"><strong>Alles Gute zum Geburtstag, meine Liebe.</strong><br/>Ich vermisse dich schon. Du bist mein Stern.<div class="de-tr">(Happy Birthday, my love. I miss you already. You are my star.)</div></div>
+<p id="lp4"></p><div class="ltr-ml" id="lml"></div><p id="lp5"></p>
+<div class="ltr-sign">Forever yours &mdash; Akshai<br/><span style="font-size:15px;color:#a06030">(yours &#128037;)</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- AUSTRIA -->
+<div id="austria" class="screen">
+<div class="sbg" id="sbg-austria"></div>
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('letter')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('memories')">Memory Jar &#8594;</button>
+</div>
+<div class="at-scroll">
+<div class="at-hdr" style="margin-bottom:8px"><h2>Kerala &rarr; Austria &#9992;</h2><p>You&apos;re going far, Kannumon. So beautifully far.</p></div>
+<svg class="fsvg" viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+<path id="fc" d="M 40 110 Q 150 15 260 45" class="fp"/>
+<circle cx="40" cy="110" r="5" fill="#e8799a"/><text x="8" y="128" fill="#e8799a" font-size="9" font-family="Inter,sans-serif">&#127804; Kerala</text>
+<circle cx="260" cy="45" r="5" fill="#60a5fa"/><text x="228" y="40" fill="#60a5fa" font-size="9" font-family="Inter,sans-serif">&#127956; Austria</text>
+<text font-size="17" text-anchor="middle" dominant-baseline="middle"><animateMotion dur="3s" repeatCount="indefinite" rotate="auto"><mpath href="#fc"/></animateMotion>&#9992;</text>
+</svg>
+<div class="at-q">
+<p>&ldquo;You&apos;re going to Austria to become the most incredible version of yourself. And even from 5,000 kilometres away &mdash; you are still my Kannumon.&rdquo;</p>
+<div class="mlq">&#3374;&#3368; &#3346;&#3378;&#3349;&#3381;&#3345;&#3369;&#3344;&#3340;&#3381;&#3340;&#3376; &#3334;&#3390;&#3368;&#3376; &#3359;&#3339;&#3381;&#3339;&#3376;, &#3359;&#3378;&#3349;&#3381;&#3344;&#3381;&#3356;&#3381; &#128149;</div>
+<div style="font-size:11px;color:var(--dim);margin-top:4px;font-family:'Inter',sans-serif">(Wherever you go, I am there &mdash; inside you)</div>
+</div>
+<div class="cd-card">
+<div class="cd-lbl">&#9203; Every second until we meet again</div>
+<div class="cd-grid">
+<div class="cd-u"><div class="cd-n" id="cdd">365</div><div class="cd-l">Days</div></div>
+<div class="cd-u"><div class="cd-n" id="cdh">00</div><div class="cd-l">Hours</div></div>
+<div class="cd-u"><div class="cd-n" id="cdm">00</div><div class="cd-l">Mins</div></div>
+<div class="cd-u"><div class="cd-n" id="cds">00</div><div class="cd-l">Secs</div></div>
+</div>
+<div class="promise">I&apos;ll be right here, waiting. &#10084;</div>
+</div>
+</div>
+</div>
+
+<!-- MEMORIES -->
+<div id="memories" class="screen">
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('austria')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('final')">Final Surprise &#8594;</button>
+</div>
+<div class="mem-scroll">
+<div class="sec-hdr"><h2>A Jar Full of Us</h2><p>Tap each memory to open it &#128149;</p></div>
+<div class="jar-wrap" id="jar-wrap">
+<svg class="jar-svg" viewBox="0 0 140 180" id="jar-s" onclick="shakeJar()">
+<defs>
+<linearGradient id="jg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(212,165,90,.12)"/><stop offset="50%" stop-color="rgba(212,165,90,.4)"/><stop offset="100%" stop-color="rgba(212,165,90,.12)"/></linearGradient>
+<linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d4a55a"/><stop offset="100%" stop-color="#9a6e2e"/></linearGradient>
+</defs>
+<rect x="26" y="8" width="88" height="20" rx="5" fill="url(#lg2)"/>
+<rect x="31" y="4" width="78" height="9" rx="4" fill="#d4a55a"/>
+<path d="M 21 28 L 16 158 Q 70 173 124 158 L 119 28 Z" fill="url(#jg)" stroke="rgba(212,165,90,.4)" stroke-width="1.5"/>
+<path d="M 31 38 L 29 138 Q 36 143 44 138 L 44 38 Z" fill="rgba(255,255,255,.08)"/>
+<text x="56" y="78" font-size="17" opacity=".8">&#128149;</text>
+<text x="76" y="108" font-size="13" opacity=".65">&#11088;</text>
+<text x="46" y="118" font-size="11" opacity=".55">&#127800;</text>
+<text x="86" y="90" font-size="9" opacity=".45">&#10024;</text>
+</svg>
+</div>
+<div class="mem-grid">
+<div class="mc" onclick="openMem(0)"><span class="mc-em">👀</span><div class="mc-ti">The Sparkle Eyes</div></div>
+<div class="mc" onclick="openMem(1)"><span class="mc-em">📞</span><div class="mc-ti">Late Night Calls</div></div>
+<div class="mc" onclick="openMem(2)"><span class="mc-em">☀️</span><div class="mc-ti">Every Good Morning</div></div>
+<div class="mc" onclick="openMem(3)"><span class="mc-em">😂</span><div class="mc-ti">Our Stupid Jokes</div></div>
+<div class="mc" onclick="openMem(4)"><span class="mc-em">🥺</span><div class="mc-ti">When You're Upset</div></div>
+<div class="mc" onclick="openMem(5)"><span class="mc-em">💌</span><div class="mc-ti">474 Days, Zero Misses</div></div>
+<div class="mc fw" onclick="openMem(6)"><span class="mc-em">⭐</span><div class="mc-ti">The Best Day of My Life</div></div>
+</div>
+<div style="display:flex;justify-content:center;margin-top:4px">
+</div>
+</div>
+</div>
+
+<div id="mem-modal">
+<div class="modal-bg" onclick="closeMem()"></div>
+<div class="modal-card">
+<span class="m-em" id="m-em">&#128149;</span>
+<div class="m-ti" id="m-ti">Memory</div>
+<div class="m-tx" id="m-tx">...</div>
+<div class="m-ml" id="m-ml"></div>
+<button class="m-close" onclick="closeMem()">Close &#10005;</button>
+</div>
+</div>
+
+<!-- FINAL -->
+<div id="final" class="screen">
+<canvas id="star-canvas"></canvas>
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('memories')">&#8592; Back</button>
+
+</div>
+<div class="final-c">
+<div class="star-icon" id="star-icon" onclick="handleStarClick()">&#11088;<div class="scc" id="scc">0</div></div>
+<div class="star-indicator">Tap 5 times for a secret! &#10024;</div>
+<div style="margin-bottom:16px">
+<span class="nm">NACHUMMA</span>
+<span class="nm-m">= The Star &#11088;</span>
+<div class="nm-t">From Sanskrit &ldquo;Nakshatra&rdquo; &mdash; a luminous body in the sky</div>
+</div>
+<div class="final-msg">
+<p>&ldquo;You were always the brightest thing in my sky. Before I knew your name, before I knew your laugh &mdash; before you looked at me with those sparkling eyes at the office door &mdash;</p>
+<p>&mdash; there was already a star-shaped space in my heart, waiting for you.&rdquo;</p>
+<div class="final-ml">I will love you forever, in this life and the next... &#128149;</div>
+<div class="final-de">&ldquo;Du bist mein Stern. Schein hell in &Ouml;sterreich, meine Liebe.&rdquo;<br/><span style="font-size:11px;opacity:.5">(You are my star. Shine bright in Austria, my love.)</span></div>
+</div>
+<div class="final-sign"><span class="kj">Your Kunja</span> &mdash; Akshai &#128037;</div>
+
+</div>
+</div>
+
+<!-- VOICE (Easter Egg) -->
+<div id="voice-screen" class="screen">
+<div class="vh"><h2>He left you a voice message &#127897;</h2><p>Akshai recorded this just for you, Kannumon &#128546;</p></div>
+<div class="vp">
+<span class="va">&#128037;</span>
+<div class="vn">Akshai &mdash; Kunja</div>
+<div class="vs">A message from his heart to yours</div>
+<div class="vwf" id="vwf"></div>
+<audio id="vaud" src="voice.mp3" preload="auto"></audio>
+<audio id="voice-bgm" src="voice-bgm.mp3" loop preload="auto"></audio>
+<button class="vpb" id="vpb" onclick="toggleVoice()">&#9654;</button>
+<div class="vnf" id="vnf" style="display:none">
+&#127897; Voice message not found.<br/>
+<span style="font-size:11px;margin-top:8px;display:block;line-height:1.8">
+Record your message on your phone.<br/>
+Save as <code>voice.mp3</code><br/>
+Put it in the same folder as <code>index.html</code>
+</span>
+</div>
+</div>
+<button class="back-btn" onclick="document.getElementById('voice-screen').classList.remove('open');">&#8592; Back to the stars</button>
+</div>
+
+<!-- NAV -->
+<div id="ndots">
+<div class="nd a" onclick="goToScreen('birthday')"></div>
+<div class="nd" onclick="goToScreen('journey')"></div>
+<div class="nd" onclick="goToScreen('story')"></div>
+<div class="nd" onclick="goToScreen('letter')"></div>
+<div class="nd" onclick="goToScreen('austria')"></div>
+<div class="nd" onclick="goToScreen('memories')"></div>
+<div class="nd" onclick="goToScreen('final')"></div>
+</div>
+<!-- Audio icon removed as requested -->
+<audio id="bg-music" src="bg-music.mp3" loop preload="auto"></audio>
+
+<script>
+const SCREENS=['birthday','journey','story','letter','austria','memories','final'];
+let cur='prank',letterDone=false,starClicks=0,voiceOn=false,confDone=false,musicOn=false;
+let slideIdx=0,slideTimer=null;
+const SLIDE_DUR=3200;
+
+function goToScreen(id){
+  const prev=document.getElementById(cur),next=document.getElementById(id);
+  if(!next||id===cur)return;
+  prev.classList.remove('active');next.classList.add('active');cur=id;updateDots();
+  if(id!=='prank'){document.getElementById('ndots').classList.add('v');}
+  if(id==='birthday'&&!confDone){confDone=true;startConfetti();revealName();createHearts();}
+  if(id==='journey'){initJourney();}
+  if(id==='story'){initTL();pauseStoryBgm();}
+  if(id==='letter'&&!letterDone){letterDone=true;startLetter();}
+  if(id==='austria'){initStarBg('sbg-austria');startCountdown();}
+  if(id==='final'){initStarCanvas();}
+  if(id!=='journey')stopSlideTimer();
+}
+function updateDots(){
+  const dots=document.querySelectorAll('.nd'),idx=SCREENS.indexOf(cur);
+  dots.forEach((d,i)=>d.classList.toggle('a',i===idx));
+}
+function showNavBtn(){
+  document.getElementById('ndots').classList.add('v');
+}
+
+/* PRANK */
+document.getElementById('prank-date').value=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});
+let prankOn=false;
+function startPrank(){
+  if(prankOn)return;prankOn=true;
+  document.getElementById('gov-ld').classList.add('show');
+  document.getElementById('gov-btn').disabled=true;document.getElementById('gov-btn').textContent='Searching...';
+  const bar=document.getElementById('ld-bar'),lt=document.getElementById('ld-txt'),ls=document.getElementById('ld-sub');
+  const stgs=[
+    {p:12,t:'Authenticating...',s:'Connecting to KSRTC server...'},
+    {p:33,t:'Fetching route data...',s:'Loading timetable...'},
+    {p:58,t:'Processing schedule...',s:'Almost there...'},
+    {p:80,t:'Rendering results...',s:'Something seems off...'},
+    {p:100,t:'WAIT A SECOND....',s:'...this is NOT a bus portal 👀'},
+  ];
+  let i=0;const iv=setInterval(()=>{
+    if(i>=stgs.length){clearInterval(iv);setTimeout(doGlitch,600);return;}
+    bar.style.width=stgs[i].p+'%';lt.textContent=stgs[i].t;ls.textContent=stgs[i].s;i++;
+  },700);
+}
+function doGlitch(){
+  const prank=document.getElementById('prank'),gl=document.getElementById('go');
+  gl.classList.add('on');prank.classList.add('glitching');
+  setTimeout(()=>{gl.classList.remove('on');prank.classList.remove('glitching');goToScreen('birthday');prank.classList.remove('active');},1400);
+}
+
+/* NAME REVEAL */
+function revealName(){
+  const name='NACHUMMA',c=document.getElementById('nrow');c.innerHTML='';
+  [...name].forEach((ch,i)=>{
+    const sp=document.createElement('span');sp.className='nl';sp.textContent=ch;
+    sp.style.animationDelay=(0.9+i*0.09)+'s';sp.style.animationPlayState='running';c.appendChild(sp);
+  });
+}
+
+/* JOURNEY SLIDESHOW */
+function initJourney(){
+  if(document.getElementById('journey').dataset.init){playStoryBgm();startSlideTimer();return;}
+  document.getElementById('journey').dataset.init='1';
+  buildJourneyDots();
+  goSlide(0);
+
+  const overlay = document.getElementById('j-curiosity');
+  const textEl  = document.getElementById('jc-text');
+  const countEl = document.getElementById('jc-count');
+
+  // Hide text initially — countdown first
+  if(textEl){ textEl.style.opacity='0'; textEl.style.display='none'; }
+  if(countEl){ countEl.style.opacity='0'; }
+
+  // Step 1: 3 → 2 → 1
+  let n = 3;
+  function showNum(){
+    if(!countEl) return;
+    countEl.textContent = n;
+    countEl.style.animation = 'none';
+    countEl.getBoundingClientRect();
+    countEl.style.opacity = '1';
+    countEl.style.animation = 'countPop 0.45s ease forwards';
+    setTimeout(()=>{
+      countEl.style.opacity = '0';
+      n--;
+      if(n > 0){
+        setTimeout(showNum, 400);
+      } else {
+        // Step 2: Show "Close your eyes..."
+        setTimeout(()=>{
+          if(countEl) countEl.style.display='none';
+          if(textEl){ textEl.style.display='block'; textEl.style.transition='opacity 0.6s'; textEl.style.opacity='0'; }
+          setTimeout(()=>{
+            if(textEl) textEl.style.opacity='1';
+            playStoryBgm();
+            // Step 3: Hold 2.4s, fade out, reveal photos
+            setTimeout(()=>{
+              if(textEl) textEl.style.opacity='0';
+              setTimeout(()=>{
+                if(overlay){
+                  overlay.style.transition='opacity 1.2s ease';
+                  overlay.style.opacity='0';
+                  overlay.style.pointerEvents='none';
+                }
+                setTimeout(startSlideTimer, 500);
+              }, 650);
+            }, 2400);
+          }, 80);
+        }, 300);
+      }
+    }, 850);
+  }
+  setTimeout(showNum, 500);
+
+  // Swipe support
+  let tx=0;
+  const area=document.getElementById('jslides');
+  if(area){
+    area.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+    area.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-tx;
+      if(Math.abs(dx)>50){if(dx<0)nextSlide();else prevSlide();}
+    },{passive:true});
+  }
+}
+
+/* STATS */
+const bday=new Date('2005-07-27'),on21=new Date('2026-07-27');
+document.getElementById('days-count').textContent=Math.floor((on21-bday)/86400000).toLocaleString('en-IN');
+
+/* CAKE */
+let candleN=0;
+const cakeS=['🎂','🎂','🎂','🥳','🎉'];
+function blowCandle(){
+  candleN++;const c=document.getElementById('cake');c.textContent=cakeS[Math.min(candleN,cakeS.length-1)];
+  c.style.animation='none';c.offsetHeight;c.style.animation='blowAnim 0.5s ease-out';
+  if(candleN>=3){
+    document.getElementById('cake-lbl').textContent='Happy Birthday Kannumon!! 🎊✨';
+    document.getElementById('cake-lbl').style.color='var(--gold)';
+    for(let i=0;i<12;i++)setTimeout(()=>{
+      const el=document.createElement('div'),em=['💖','⭐','✨','🌸','💫','🎊'];
+      el.style.cssText=`position:fixed;font-size:${18+Math.random()*18}px;left:${Math.random()*85+5}vw;top:${Math.random()*80+5}vh;pointer-events:none;z-index:999;opacity:0;animation:popIn .4s ease forwards`;
+      el.textContent=em[Math.floor(Math.random()*em.length)];document.body.appendChild(el);setTimeout(()=>el.remove(),1800);
+    },i*80);
+  }
+}
+
+/* CONFETTI */
+function startConfetti(){
+  const cv=document.getElementById('conf-cv'),ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#d4a55a','#e8799a','#9b7fd4','#60a5fa','#4ade80','#f472b6'];
+  const ps=Array.from({length:130},()=>({x:Math.random()*cv.width,y:Math.random()*-cv.height,w:4+Math.random()*7,h:4+Math.random()*7,c:cols[Math.floor(Math.random()*cols.length)],spd:1.5+Math.random()*3,sw:Math.random()*2.5-1.25,rot:Math.random()*360,rs:Math.random()*5-2.5,ph:Math.random()*Math.PI*2,op:.7+Math.random()*.3,ci:Math.random()>.5}));
+  let fr=0;
+  (function anim(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{p.y+=p.spd;p.x+=Math.sin(fr*.02+p.ph)*p.sw*.2;p.rot+=p.rs;if(p.y>cv.height+20){p.y=-20;p.x=Math.random()*cv.width;}
+      ctx.save();ctx.globalAlpha=p.op;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;
+      if(p.ci){ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}else ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();});
+    fr++;requestAnimationFrame(anim);
+  })();
+  setTimeout(()=>ps.forEach(p=>p.spd=0),7000);
+}
+
+/* FLOATING HEARTS */
+function createHearts(){
+  const c=document.getElementById('fhearts'),em=['💕','💖','💗','💓','🌸','✨','⭐'];
+  for(let i=0;i<16;i++){const el=document.createElement('div');el.className='fh';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.left=Math.random()*90+'vw';el.style.fontSize=(12+Math.random()*14)+'px';const dur=6+Math.random()*8;el.style.animationDuration=dur+'s';el.style.animationDelay=(Math.random()*-dur)+'s';c.appendChild(el);}
+}
+
+function buildJourneyDots(){
+  const c=document.getElementById('jdots');c.innerHTML='';
+  for(let i=0;i<50;i++){
+    const d=document.createElement('div');d.className='j-dot'+(i===0?' a':'');
+    d.onclick=(()=>{const idx=i;return ()=>goSlide(idx);})();
+    c.appendChild(d);
+  }
+}
+function goSlide(idx){
+  const total=50;
+  slideIdx=(idx+total)%total;
+  document.querySelectorAll('.jslide').forEach((s,i)=>s.classList.toggle('active',i===slideIdx));
+  document.querySelectorAll('.j-dot').forEach((d,i)=>{
+    const isActive = i===slideIdx;
+    d.classList.toggle('a',isActive);
+    if(isActive && d.scrollIntoView) {
+      d.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'center'});
+    }
+  });
+  const fill=document.getElementById('jpf');
+  if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition='width '+SLIDE_DUR+'ms linear';fill.style.width='100%';},30);}
+}
+function nextSlide(){stopSlideTimer();goSlide(slideIdx+1);startSlideTimer();}
+function prevSlide(){stopSlideTimer();goSlide(slideIdx-1);startSlideTimer();}
+function startSlideTimer(){stopSlideTimer();slideTimer=setInterval(()=>goSlide(slideIdx+1),SLIDE_DUR);}
+function stopSlideTimer(){if(slideTimer){clearInterval(slideTimer);slideTimer=null;}}
+
+/* STORY BGM (Dude BGM) */
+let storyBgmOn=false;
+const storyBgm=document.getElementById('story-bgm');
+function playStoryBgm(){
+  if(!storyBgmOn&&storyBgm){
+    storyBgm.volume=0.6;
+    storyBgm.play().then(()=>storyBgmOn=true).catch(()=>{});
+  }
+}
+function pauseStoryBgm(){
+  if(storyBgmOn&&storyBgm){storyBgm.pause();storyBgmOn=false;}
+}
+
+/* TIMELINE */
+function initTL(){
+  const items=document.querySelectorAll('[data-tl]');
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');}),{threshold:.12,root:document.getElementById('story-scroll')});
+  items.forEach(i=>obs.observe(i));
+}
+
+/* LETTER TYPEWRITER */
+const lparts=[{id:'lp1',t:'I have been thinking about what to write for days. How do you put 1.3 years of laughter, late nights, tears, and stupid inside jokes into words? You simply cannot. But I am going to try, because you deserve every effort I can give.'},
+{id:'lp2',t:'Today you turn 21. And I want you to know — the world got infinitely better the day you were born. You are smart, funny, annoyingly beautiful, and you are mine. (Okay, mostly mine 😌)'},
+{id:'lp3',t:'You are going to Austria. That thought terrifies me and fills me with pride at the same time. You are going to go so far, Kannumon. Not just in distance — but in life. You are made for great things.'},
+{id:'lml',t:'I will never forget you. Never. 💕'},
+{id:'lp4',t:'Distance is just a number. Time zones are just mathematics. And my love for you — it does not care about either of those things. I will be here every single morning, thinking of you.'},
+{id:'lp5',t:'So go shine, my star. Go learn, grow, conquer Austria. I will be waiting — not because I have to — but because there is nowhere else in this world I would rather wait than right here, for you.'}];
+function typeText(id,text,speed,cb){
+  const el=document.getElementById(id);if(!el){if(cb)cb();return;}
+  el.innerHTML='';let i=0;
+  const iv=setInterval(()=>{
+    if(i>=text.length){clearInterval(iv);el.innerHTML=text;if(cb)cb();return;}
+    el.innerHTML=text.substring(0,i+1)+'<span class="cur"></span>';
+    const lb=el.closest('.env-body');if(lb)lb.scrollTop=lb.scrollHeight;i++;
+  },speed||22);
+}
+function startLetter(){let idx=0;function next(){if(idx>=lparts.length)return;const p=lparts[idx++];typeText(p.id,p.t,20,()=>setTimeout(next,260));}next();}
+
+/* STAR BG */
+function initStarBg(id){
+  const c=document.getElementById(id);if(!c||c.dataset.init)return;c.dataset.init='1';
+  for(let i=0;i<80;i++){const s=document.createElement('div');s.className='sbg-s';const sz=.8+Math.random()*2.2;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;c.appendChild(s);}
+}
+
+/* COUNTDOWN */
+function startCountdown(){
+  const t=new Date('2027-07-27T00:00:00');
+  function u(){
+    const d=t-new Date();if(d<=0)return;
+    document.getElementById('cdd').textContent=Math.floor(d/86400000);
+    document.getElementById('cdh').textContent=String(Math.floor((d%86400000)/3600000)).padStart(2,'0');
+    document.getElementById('cdm').textContent=String(Math.floor((d%3600000)/60000)).padStart(2,'0');
+    document.getElementById('cds').textContent=String(Math.floor((d%60000)/1000)).padStart(2,'0');
+  }
+  u();setInterval(u,1000);
+}
+
+/* MEMORIES */
+const mems=[{em:'👀',ti:'The Sparkle Eyes',tx:"Annu makkal pokannneram ennod nte kannil nokku chodich Njn poit varatte varatte njn...' — I looked into your eyes and saw the whole universe. Stars. Literal sparkles. I knew right then.",ml:'I saw my future in those eyes. 💕'},
+{em:'📞',ti:'Late Night Calls',tx:"Those calls that started with 'just 5 minutes' and ended at 2am. I never wanted them to end. Your voice at night was the safest feeling in the world.",ml:"I didn't want to sleep when I could hear your voice... ♥"},
+{em:'☀️',ti:'Every Good Morning',tx:"You were the first thought every morning. Not work, not my alarm — you. 'Is she awake yet?' You made mornings worth waking up for.",ml:'Every morning is with you 🌅'},
+{em:'😂',ti:'Our Stupid Jokes',tx:'No one else would understand them. The way we make each other cry-laughing at the most ridiculous things — that is our language.',ml:"You're most beautiful when you laugh 😍"},
+{em:'🥺',ti:"When You're Upset",tx:"Even those moments I wouldn't trade. Because fixing things with you, hearing you laugh again — the moment your smile returns — worth every second.",ml:'I would do anything to see your smile ❤️'},
+{em:'💌',ti:'474 Days, Zero Misses',tx:'1.3 years. Not one single day without talking, seeing, loving. Do you realise how rare that is? Most people never find this. We found it in each other.',ml:'Not a single day without you 💕'},
+{em:'⭐',ti:'The Best Day of My Life',tx:"It wasn't some grand moment. It was a random ordinary day when I realised — with you, every ordinary day is extraordinary. That is the gift you gave me.",ml:'I will never leave you. Never. 💖'}];
+function openMem(i){
+  const m=mems[i];
+  document.getElementById('m-em').textContent=m.em;
+  document.getElementById('m-ti').textContent=m.ti;
+  document.getElementById('m-tx').textContent=m.tx;
+  document.getElementById('m-ml').textContent=m.ml||'';
+  document.getElementById('mem-modal').classList.add('open');
+}
+function closeMem(){document.getElementById('mem-modal').classList.remove('open');}
+function shakeJar(){
+  const jar=document.getElementById('jar-s');
+  jar.style.transform='rotate(-10deg)';setTimeout(()=>jar.style.transform='rotate(10deg)',100);setTimeout(()=>jar.style.transform='rotate(-4deg)',200);setTimeout(()=>jar.style.transform='rotate(0)',300);
+  const em=['💕','💖','⭐','🌸','✨'],w=document.getElementById('jar-wrap');
+  const b=document.createElement('div');b.className='jmb';b.textContent=em[Math.floor(Math.random()*em.length)];b.style.left=(38+Math.random()*24)+'%';b.style.top='15%';b.style.animationDuration='1.1s';w.appendChild(b);setTimeout(()=>b.remove(),1300);
+}
+
+/* STAR CANVAS */
+function initStarCanvas(){
+  const cv=document.getElementById('star-canvas');if(!cv||cv.dataset.init)return;cv.dataset.init='1';
+  const ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const stars=Array.from({length:220},()=>{return{x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*2,op:.15+Math.random()*.85,tw:.02+Math.random()*.05,ph:Math.random()*Math.PI*2};;});
+  const shooters=[];setInterval(()=>shooters.push({x:Math.random()*cv.width,y:Math.random()*cv.height*.5,vx:3+Math.random()*5,vy:1+Math.random()*3,life:1}),3500);
+  let fr=0;
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);fr+=.02;
+    stars.forEach(s=>{ctx.globalAlpha=s.op*(.45+.55*Math.sin(fr*s.tw/0.02+s.ph));ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();});
+    shooters.forEach((s,i)=>{
+      ctx.globalAlpha=s.life*.7;const gr=ctx.createLinearGradient(s.x,s.y,s.x-s.vx*12,s.y-s.vy*12);gr.addColorStop(0,'#d4a55a');gr.addColorStop(1,'transparent');
+      ctx.strokeStyle=gr;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.vx*14,s.y-s.vy*14);ctx.stroke();
+      s.x+=s.vx;s.y+=s.vy;s.life-=.015;if(s.life<=0)shooters.splice(i,1);
+    });
+    ctx.globalAlpha=1;requestAnimationFrame(draw);
+  })();
+}
+
+/* EASTER EGG */
+function handleStarClick(){
+  starClicks++;const c=document.getElementById('scc');c.textContent=starClicks;c.classList.add('v');
+  if(starClicks>=5){c.classList.remove('v');openVoice();}
+}
+function openVoice(){document.getElementById('voice-screen').classList.add('active','open');initWf();checkVoice();}
+function initWf(){
+  const wf=document.getElementById('vwf');if(wf.dataset.init)return;wf.dataset.init='1';
+  [7,12,18,25,32,25,18,12,7,12,18,25,32,38,32,25,18,12,7,12,18,25,32,25,18,12,7].forEach(h=>{
+    const b=document.createElement('div');b.className='wb';b.style.setProperty('--h',h+'px');b.style.animationDelay=Math.random()*.5+'s';wf.appendChild(b);
+  });
+}
+function checkVoice(){
+  const a=document.getElementById('vaud');
+  a.addEventListener('error',()=>{document.getElementById('vnf').style.display='block';const b=document.getElementById('vpb');b.style.opacity='.3';b.style.pointerEvents='none';});
+  a.load();
+}
+function toggleVoice(){
+  const a=document.getElementById('vaud'),btn=document.getElementById('vpb'),bars=document.querySelectorAll('.wb');
+  const voiceBgm=document.getElementById('voice-bgm');
+  if(!voiceOn){a.play().then(()=>{voiceOn=true;btn.innerHTML='⏸';bars.forEach(b=>b.classList.add('on'));if(voiceBgm){voiceBgm.volume=0.3;voiceBgm.play().catch(()=>{});}}).catch(()=>document.getElementById('vnf').style.display='block');}
+  else{a.pause();voiceOn=false;btn.innerHTML='▶';bars.forEach(b=>b.classList.remove('on'));if(voiceBgm)voiceBgm.pause();}
+  a.addEventListener('ended',()=>{voiceOn=false;btn.innerHTML='▶';bars.forEach(b=>b.classList.remove('on'));if(voiceBgm)voiceBgm.pause();},{once:true});
+}
+
+/* MUSIC */
+function toggleMusic(){
+  const m=document.getElementById('bg-music'),btn=document.getElementById('mbt');
+  if(!musicOn){m.play().then(()=>{musicOn=true;btn.textContent='🎵';btn.classList.add('pl');}).catch(()=>{});}
+  else{m.pause();musicOn=false;btn.textContent='🔇';btn.classList.remove('pl');}
+}
+
+/* RESIZE */
+window.addEventListener('resize',()=>{
+  const cc=document.getElementById('conf-cv');if(cc){cc.width=innerWidth;cc.height=innerHeight;}
+  const sc=document.getElementById('star-canvas');if(sc){sc.width=innerWidth;sc.height=innerHeight;}
+});
+
+setTimeout(startPrank,1500);
+</script>
+</body>
+</html>
