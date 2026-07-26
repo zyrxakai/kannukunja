@@ -1280,6 +1280,13 @@ let slideIdx=0,slideTimer=null;
 const SLIDE_DUR=3200;
 
 function goToScreen(id){
+  if(!window.au){
+    window.au=true;
+    ['story-bgm','vaud','voice-bgm','bg-music'].forEach(i=>{
+      const a=document.getElementById(i);
+      if(a){var p=a.play();if(p!==undefined)p.catch(()=>{\});a.pause();}
+    });
+  }
   const prev=document.getElementById(cur),next=document.getElementById(id);
   if(!next||id===cur)return;
   prev.classList.remove('active');next.classList.add('active');cur=id;updateDots();
