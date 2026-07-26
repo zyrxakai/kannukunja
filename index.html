@@ -233,7 +233,7 @@ h1,h2,h3,h4,.display{font-family:'Playfair Display',serif}
   max-width: 420px;
   flex: 0 1 auto; /* Allows it to shrink if the screen is short */
   min-height: 0;
-  aspect-ratio: 4 / 3; /* Maintains 4:3 ratio perfectly */
+  aspect-ratio: 3 / 4; /* Maintains 3:4 portrait ratio perfectly */
   border-radius: 14px;
   overflow: hidden;
   position: relative;
@@ -245,7 +245,7 @@ h1,h2,h3,h4,.display{font-family:'Playfair Display',serif}
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 14px;
 }
 
@@ -1372,7 +1372,7 @@ function initJourney(){
           setTimeout(()=>{
             if(textEl) textEl.style.opacity='1';
             playStoryBgm();
-            // Step 3: Hold 2.4s, fade out, reveal photos
+            // Step 3: Hold minimal time, fade out, reveal photos
             setTimeout(()=>{
               if(textEl) textEl.style.opacity='0';
               setTimeout(()=>{
@@ -1383,7 +1383,7 @@ function initJourney(){
                 }
                 setTimeout(startSlideTimer, 500);
               }, 650);
-            }, 2400);
+            }, 200);
           }, 80);
         }, 300);
       }
