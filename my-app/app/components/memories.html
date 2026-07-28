@@ -1,0 +1,36 @@
+<div id="memories" class="screen">
+<div class="screen-top-nav">
+<button class="nav-back" onclick="goToScreen('austria')">&#8592; Back</button>
+<button class="nav-next" onclick="goToScreen('final')">Final Surprise &#8594;</button>
+</div>
+<div class="mem-scroll">
+<div class="sec-hdr"><h2>A Jar Full of Us</h2><p>Tap each memory to open it &#128149;</p></div>
+<div class="jar-wrap" id="jar-wrap">
+<svg class="jar-svg" viewBox="0 0 140 180" id="jar-s" onclick="shakeJar()">
+<defs>
+<linearGradient id="jg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(212,165,90,.12)"/><stop offset="50%" stop-color="rgba(212,165,90,.4)"/><stop offset="100%" stop-color="rgba(212,165,90,.12)"/></linearGradient>
+<linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d4a55a"/><stop offset="100%" stop-color="#9a6e2e"/></linearGradient>
+</defs>
+<rect x="26" y="8" width="88" height="20" rx="5" fill="url(#lg2)"/>
+<rect x="31" y="4" width="78" height="9" rx="4" fill="#d4a55a"/>
+<path d="M 21 28 L 16 158 Q 70 173 124 158 L 119 28 Z" fill="url(#jg)" stroke="rgba(212,165,90,.4)" stroke-width="1.5"/>
+<path d="M 31 38 L 29 138 Q 36 143 44 138 L 44 38 Z" fill="rgba(255,255,255,.08)"/>
+<text x="56" y="78" font-size="17" opacity=".8">&#128149;</text>
+<text x="76" y="108" font-size="13" opacity=".65">&#11088;</text>
+<text x="46" y="118" font-size="11" opacity=".55">&#127800;</text>
+<text x="86" y="90" font-size="9" opacity=".45">&#10024;</text>
+</svg>
+</div>
+<div class="mem-grid">
+<div class="mc" onclick="openMem(0)"><span class="mc-em">👀</span><div class="mc-ti">The Sparkle Eyes</div></div>
+<div class="mc" onclick="openMem(1)"><span class="mc-em">📞</span><div class="mc-ti">Late Night Calls</div></div>
+<div class="mc" onclick="openMem(2)"><span class="mc-em">☀️</span><div class="mc-ti">Every Good Morning</div></div>
+<div class="mc" onclick="openMem(3)"><span class="mc-em">😂</span><div class="mc-ti">Our Stupid Jokes</div></div>
+<div class="mc" onclick="openMem(4)"><span class="mc-em">🥺</span><div class="mc-ti">When You're Upset</div></div>
+<div class="mc" onclick="openMem(5)"><span class="mc-em">💌</span><div class="mc-ti">474 Days, Zero Misses</div></div>
+<div class="mc fw" onclick="openMem(6)"><span class="mc-em">⭐</span><div class="mc-ti">The Best Day of My Life</div></div>
+</div>
+<div style="display:flex;justify-content:center;margin-top:4px">
+</div>
+</div>
+</div>

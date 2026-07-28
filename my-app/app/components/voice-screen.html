@@ -1,0 +1,22 @@
+<div id="voice-screen" class="screen">
+<div class="vh"><h2>He left you a voice message &#127897;</h2><p>Akshai &mdash; Kunja recorded this just for you, Kannumon &#128546;</p></div>
+<div class="vp">
+<span class="va">&#128037;</span>
+<div class="vn">Akshai &mdash; Kunja &mdash; Kunja</div>
+<div class="vs">A message from his heart to your Kunja</div>
+<audio id="story-bgm" src="dude-bgm.mp3" loop preload="auto"></audio>
+<audio id="vaud" src="voice.mp3" preload="none"></audio>
+<audio id="voice-bgm" src="voice-bgm.mp3" loop preload="none"></audio>
+<div class="vwf" id="vwf"></div>
+<button class="vpb" id="vpb" onclick="toggleVoice()">&#9654;</button>
+<div class="vnf" id="vnf" style="display:none">
+&#127897; Voice message not found.<br/>
+<span style="font-size:11px;margin-top:8px;display:block;line-height:1.8">
+Record your message on your phone.<br/>
+Save as <code>voice.mp3</code><br/>
+Put it in the same folder as <code>index.html</code>
+</span>
+</div>
+</div>
+<button class="back-btn" onclick="document.getElementById('voice-screen').classList.remove('open');">&#8592; Back to the stars</button>
+</div>
